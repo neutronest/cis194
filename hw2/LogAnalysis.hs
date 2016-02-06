@@ -4,13 +4,12 @@ import Log
 import Data.List
 import Data.List.Split 
 
-parseStr :: String -> (String, String,String)
+parseStr :: String -> (String, String, String)
 parseStr str = let strList = splitOn " " str in
   let messageType = head strList in
   let timeStamp = head (tail strList) in
   let content = intercalate " " (tail (tail strList)) in
   (messageType, timeStamp, content)
-
 parseMessage :: String -> LogMessage
 parseMessage messageStr = let strList = splitOn " " messageStr in
   let s1 = head strList in
@@ -35,17 +34,37 @@ parsetest str = splitOn " " str
 
 
 insertTree :: LogMessage -> MessageTree -> MessageTree
+insertTree (Unknown _) messageTree = messageTree
+insertTree (LogMessage Info _ _) messageTree = messageTree
+insertTree (LogMessage Warning _ _) messageTree = messageTree
+insertTree logMessage Leaf = Node Leaf logMessage Leaf
 insertTree logMessage messageTree =
-  let LogMessage (messageType, _, _) = logMessage in
-  if messageType == Info || messageType == Warning
-     then messageTree
-  else if messageTree == Leaf
-       then (Leaf logMessage Leaf)
-       else
-         let (leftTree, ((_, nodeNum),_, _), rightTree) = messageTree in
-         let LogMessage ((_, n), _, _) = logMessage  in
-         if n > nodeNum
-            then insert logMessage rightTree
-         else if n < nodeNum
-                 then insert logMessage leftTree
-              else messageTree
+  let (LogMessage (Error num) t s)= logMessage in
+  let (Node leftTree nodeLogMessage rightTree) = messageTree in
+  let (LogMessage (Error nodeNum) _ _) = nodeLogMessage in
+  if num > nodeNum then (Node leftTree nodeLogMessage (insertTree logMessage rightTree))
+  else if num < nodeNum then (Node (insertTree logMessage leftTree) nodeLogMessage rightTree)
+       else messageTree
+
+build :: [LogMessage] -> MessageTree
+build l = _build l Leaf
+  where _build [] messageTree = messageTree
+        _build (x:xs) messageTree = _build xs (insertTree x messageTree)
+
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder messageTree =
+  let Node leftTree logMessage rightTree = messageTree in
+  let _inOrder (Node leftTree logMessage rightTree) = (inOrder leftTree) ++ [logMessage] ++ (inOrder rightTree) in
+  _inOrder messageTree
+
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong [] = []
+whatWentWrong logMessages =
+  let orderedLogMessages = inOrder (build logMessages) in
+  _filter orderedLogMessages []
+  where _filter [] l = l
+        _filter (x:xs) l =
+          let LogMessage (Error severity) _ str = x in
+          if severity >= 50 then _filter xs l++[str]
+          else _filter xs l
