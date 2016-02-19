@@ -1,5 +1,7 @@
 module Golf where
 
+{-- Exercise 1 --}
+
 selectItem :: Int -> [a] -> [a]
 selectItem _ [] = []
 selectItem n l = loop n 1 l []
@@ -12,6 +14,8 @@ skips l = let len = length l in
   map loop [1..len]
   where loop n = selectItem n l
 
+{-- Exercise 2 --}
+
 localMaxima :: [Integer] -> [Integer]
 localMaxima (x:y:z:xs) = loop (x:y:z:xs) []
   where loop [] res = []
@@ -20,3 +24,10 @@ localMaxima (x:y:z:xs) = loop (x:y:z:xs) []
         loop (x:y:z:xs) res = if y > x && y > z then loop (y:z:xs) (res++[y])
                               else loop (y:z:xs) res
 
+{-- Exercise 3  --}
+histogram :: [Integer] -> String
+{-- l : Integer --}
+histogram l = 
+
+test :: a -> a
+test l = Nothing
