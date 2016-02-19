@@ -82,7 +82,7 @@ insertAVLTree (Node depth leftTree n rightTree) x =
           let balanceFactor = (getHeight newLeftTree) - (getHeight newRightTree) in
           if balanceFactor == 2 then
             let Node  _ _ leftVal _ = newLeftTree in
-            if newVal < leftVal then rotateLL newTree
+            if x < leftVal then rotateLL newTree
             else rotateLR newTree
           else newTree
         else if x > n then
@@ -93,7 +93,7 @@ insertAVLTree (Node depth leftTree n rightTree) x =
                let balanceFactor = (getHeight newRightTree) - (getHeight newLeftTree) in
                if balanceFactor == 2 then
                  let Node _ _ rightVal _ = newRightTree in
-                 if newVal > rightVal then rotateRR newTree
+                 if x > rightVal then rotateRR newTree
                  else rotateRL newTree
                else newTree
              else Node depth leftTree n rightTree in
