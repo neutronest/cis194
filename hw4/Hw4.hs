@@ -103,3 +103,26 @@ insertAVLTree (Node depth leftTree n rightTree) x =
 foldAVLTree :: Ord a => [a] -> Tree a
 foldAVLTree [] = Leaf
 foldAVLTree l = foldl insertAVLTree Leaf l
+
+{-- Exercise 3 --}
+xor :: [Bool] -> Bool
+xor [] = False
+xor l = foldl xor' False l where
+  xor' True True = False
+  xor' True False = True
+  xor' False True = True
+  xor' False False = False
+
+map' :: (a -> b) -> [a] -> [b]
+map' f [] = []
+map' f l = loop l [] where
+  loop [] res = res
+  loop (x:xs) res = loop xs (res ++ [f x])
+
+{-- Optional --}
+myFoldl :: (a -> b -> a) -> a -> [b] -> a
+myFoldl f x [] = x
+
+{-- Exercise 4 --}
+sieveSundaram :: Integer -> [Integer]
+sieveSundaram n = map (\x -> 2*x + 1) [ x | x <- [1..n], elem x [i+j+2*i*j | j <- [1..n], i<-[1..j], i+j+2*i*j < n] == False ]
