@@ -126,3 +126,4 @@ myFoldl f x [] = x
 {-- Exercise 4 --}
 sieveSundaram :: Integer -> [Integer]
 sieveSundaram n = map (\x -> 2*x + 1) [ x | x <- [1..n], elem x [i+j+2*i*j | j <- [1..n], i<-[1..j], i+j+2*i*j < n] == False ]
+
